@@ -1,20 +1,27 @@
 package com.app.agreement.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.app.agreement.dto.OwnerDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
-public class ClientProfile {
+public class ClientProfile extends BaseEntityProfile {
 
-    @Id
-    @GeneratedValue
-    private Integer id;
+    @OneToMany(mappedBy = "clientProfile")
+    @JsonIgnore
+    private List<AgreementEntity> agreements;
 
-    private String name;
-    private String email;
-    private String password;
-    private String contact_no;
+    @ManyToMany
+    @JoinTable(name = "client_owner",
+                joinColumns = {@JoinColumn(name = "client_id")},
+                inverseJoinColumns = {@JoinColumn(name = "owner_id")}
+    )
+    private List<OwnerProfile> ownerProfiles;
+
 }

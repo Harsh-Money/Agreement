@@ -1,22 +1,30 @@
 package com.app.agreement.entity;
 
+import com.app.agreement.util.OwnersShop;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
-public class OwnerProfile {
-// id, Name, email, password, contact no.
-    @Id
-    @GeneratedValue
-    private Integer id;
+public class OwnerProfile extends BaseEntityProfile {
 
-    private String name;
-    private String email;
-    private String password;
-    private String contact_no;
-    @OneToOne
-    @JoinColumn(name = "shop_id")
-    private OwnerShop ownerShop;
+    @OneToMany(mappedBy = "ownerProfile")
+    @JsonIgnore
+    private List<AgreementEntity> agreements;
+
+    @ManyToMany(mappedBy = "ownerProfiles")
+    @JsonIgnore
+    private List<ClientProfile> clientProfiles;
+
+    @Embedded
+    private OwnersShop ownersShop;
 
 }
