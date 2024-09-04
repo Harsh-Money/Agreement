@@ -1,23 +1,28 @@
 package com.app.agreement.entity;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Date;
 
-@Entity
+@MappedSuperclass
 @Data
-public class OwnerAgreement {
-//    id, Name, Cloudinary url, created timestamp , modified timestamp, running/Finished.
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+public class BaseEntityAgreement {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     private String name;
-    private String CloudinaryUrl;
+    private String cloudinaryUrl;
     private Date createdTimestamp;
     private Date modifiedTimestamp;
     private String status;
