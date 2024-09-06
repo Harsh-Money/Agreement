@@ -15,6 +15,9 @@ public interface OwnerRepo extends JpaRepository<OwnerProfile, Integer> {
 
     List<OwnerProfile> findAll();
 
+    @Query("SELECT op FROM OwnerProfile op WHERE op.name = :name")
+    OwnerProfile findByNameIgnoreCase(@Param("name") String name);
+
     @Modifying
     @Transactional
     @Query("UPDATE OwnerProfile op " +

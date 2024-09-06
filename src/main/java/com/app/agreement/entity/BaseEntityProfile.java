@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @MappedSuperclass
 @Data
 @NoArgsConstructor
@@ -23,4 +25,5 @@ public class BaseEntityProfile {
     private String email;
     private String password;
     private String contact_no;
+    private List<String> roles;
 }

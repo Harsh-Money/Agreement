@@ -6,6 +6,7 @@ import com.app.agreement.entity.ClientProfile;
 import com.app.agreement.service.ClientService;
 import com.app.agreement.vo.ClientOwnerAgreementVoIDs;
 import com.app.agreement.vo.ClientVo;
+import com.cloudinary.Cloudinary;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
