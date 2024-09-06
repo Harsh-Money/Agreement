@@ -9,6 +9,7 @@ import java.util.List;
 public interface ClientService {
 
     public List<ClientProfile> getAllClient() throws Exception;
+    public ClientProfile getClientByName(String clientName)throws Exception;
     public Boolean setClientDetails(ClientDto clientDto)throws Exception;
     public Boolean updateClientDetails(ClientDto clientDto)throws Exception;
     public Boolean deleteClientExist(Integer id)throws Exception;

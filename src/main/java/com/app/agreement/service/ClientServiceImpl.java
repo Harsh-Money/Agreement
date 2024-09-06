@@ -12,6 +12,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -24,14 +25,27 @@ public class ClientServiceImpl implements ClientService{
     private OwnerRepo ownerRepo;
 
 
+
     public List<ClientProfile> getAllClient() throws Exception {
+        String name = "Ram";
+        List<ClientProfile> clientProfile = clientRepo.findByNameIgnoreCase(name);
+        System.out.println(clientProfile.get(0).getName());
         return clientRepo.findAll();
+    }
+
+    @Override
+    public ClientProfile getClientByName(String clientName) throws Exception {
+        List<ClientProfile> clientProfile = clientRepo.findByNameIgnoreCase(clientName);
+        return null;
     }
 
     @Transactional
     public Boolean setClientDetails(ClientDto clientDto) throws Exception{
         ClientProfile clientProfile = new ClientProfile();
+//        clientDto.setPassword(passwordEncoder.encode(clientDto.getPassword()));
+//        clientDto.setRoles(Arrays.asList("client"));
         BeanUtils.copyProperties(clientDto, clientProfile);
+        System.out.println(clientProfile.getPassword());
         clientRepo.save(clientProfile);
         return true;
     }
@@ -39,6 +53,9 @@ public class ClientServiceImpl implements ClientService{
     @Override
     public Boolean updateClientDetails(ClientDto clientDto) throws Exception {
         ClientProfile clientProfile = new ClientProfile();
+//        if(clientDto.getPassword() != null){
+//            clientDto.setPassword(passwordEncoder.encode(clientDto.getPassword()));
+//        }
         BeanUtils.copyProperties(clientDto,clientProfile);
         int id = clientDto.getId();
         int result = clientRepo.updateClientProfile(id, clientDto);

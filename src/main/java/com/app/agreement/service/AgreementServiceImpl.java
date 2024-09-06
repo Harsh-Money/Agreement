@@ -2,6 +2,7 @@ package com.app.agreement.service;
 
 import com.app.agreement.dto.AgreementDto;
 import com.app.agreement.dto.ClientOwnerAgreementDtoIDs;
+import com.app.agreement.dto.ClientOwnerIDsDto;
 import com.app.agreement.entity.AgreementEntity;
 import com.app.agreement.entity.ClientProfile;
 import com.app.agreement.entity.OwnerProfile;
@@ -74,5 +75,16 @@ public class AgreementServiceImpl implements AgreementService{
         agreementEntity.setOwnerProfile(ownerProfile);
         agreementRepo.save(agreementEntity);
         return true;
+    }
+
+    @Override
+    public Boolean getAgreementSigned(ClientOwnerIDsDto clientOwnerIDsDto) throws Exception {
+        ClientProfile clientProfile = clientRepo.findById(clientOwnerIDsDto.getClientId()).get();
+        OwnerProfile ownerProfile = ownerRepo.findById(clientOwnerIDsDto.getOwnerId()).get();
+        if(clientOwnerIDsDto.getClientPassword() == clientProfile.getPassword()
+                && clientOwnerIDsDto.getOwnerPassword() == ownerProfile.getPassword()) {
+            return true;
+        }
+        return false;
     }
 }

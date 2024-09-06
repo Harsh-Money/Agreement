@@ -2,17 +2,22 @@ package com.app.agreement.controller;
 
 import com.app.agreement.dto.AgreementDto;
 import com.app.agreement.dto.ClientOwnerAgreementDtoIDs;
+import com.app.agreement.dto.ClientOwnerIDsDto;
 import com.app.agreement.entity.AgreementEntity;
 import com.app.agreement.service.AgreementService;
+import com.app.agreement.service.ImageUpload;
 import com.app.agreement.vo.AgreementVo;
 import com.app.agreement.vo.ClientOwnerAgreementVoIDs;
+import com.app.agreement.vo.ClientOwnerIDsVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/agreement")
@@ -20,6 +25,9 @@ public class Agreements {
 
     @Autowired
     private AgreementService agreementService;
+
+    @Autowired
+    private ImageUpload imageUpload;
 
     @GetMapping
     public ResponseEntity<List<AgreementEntity>> getAllAgreement() {
@@ -50,7 +58,7 @@ public class Agreements {
     }
 
     @PostMapping
-    public ResponseEntity<?> setAgreement(@RequestBody AgreementVo agreementVo){
+    public ResponseEntity<?> setAgreementDetails(@RequestBody AgreementVo agreementVo){
         try{
             AgreementDto agreementDto = new AgreementDto();
             BeanUtils.copyProperties(agreementVo,agreementDto);
@@ -88,6 +96,37 @@ public class Agreements {
                 return new ResponseEntity<>(result, HttpStatus.BAD_GATEWAY);
             }
         } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
+    }
+
+    @PostMapping("/image-upload")
+    public ResponseEntity<Map> setAgreementImageToCloudinary(@RequestParam("image") MultipartFile file) {
+        try{
+            Map imageRespose = imageUpload.upload(file);
+            if (imageRespose != null){
+                return new ResponseEntity<>(imageRespose, HttpStatus.ACCEPTED);
+            } else {
+                return new ResponseEntity<>(imageRespose, HttpStatus.BAD_GATEWAY);
+            }
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+    }
+
+    @PostMapping("/sign")
+    public ResponseEntity<String> getAgreementSigned(@RequestBody ClientOwnerIDsVo clientOwnerIDsVo){
+        try {
+            ClientOwnerIDsDto clientOwnerIDsDto = new ClientOwnerIDsDto();
+            BeanUtils.copyProperties(clientOwnerIDsVo,clientOwnerIDsDto);
+            Boolean result = agreementService.getAgreementSigned(clientOwnerIDsDto);
+            if (result == true){
+                return new ResponseEntity<>("Correct Person", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Wrong person", HttpStatus.BAD_GATEWAY);
+            }
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
 
