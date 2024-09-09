@@ -62,7 +62,7 @@ public class Client {
         }
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<?> setClient(@RequestBody ClientVo clientVo){
         try{
             ClientDto clientDto = new ClientDto();
@@ -106,5 +106,13 @@ public class Client {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
 
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody ClientVo clientVo){
+        ClientDto clientDto = new ClientDto();
+        BeanUtils.copyProperties(clientVo,clientDto);
+        System.out.println(clientVo);
+        return new ResponseEntity<>(clientService.verify(clientDto), HttpStatus.OK);
     }
 }

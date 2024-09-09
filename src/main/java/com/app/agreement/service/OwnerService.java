@@ -11,4 +11,6 @@ public interface OwnerService {
     public Boolean setOwnerDetails(OwnerDto ownerDto)throws Exception;
     public Boolean updateOwnerDetails(OwnerDto ownerDto)throws Exception;
     public Boolean deleteOwnerExist(Integer id)throws Exception;
+
+    String verify(OwnerDto ownerDto);
 }
