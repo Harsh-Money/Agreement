@@ -15,7 +15,7 @@ public interface ClientRepo extends JpaRepository<ClientProfile, Integer> {
     List<ClientProfile> findAll();
 
 
-    List<ClientProfile> findByNameIgnoreCase( String name);
+    ClientProfile findByNameIgnoreCase( String name);
 
 //    @Query("select cp from ClientProfile cp where cp.id = :id")
 //    ClientProfile findByClientId(Integer id);

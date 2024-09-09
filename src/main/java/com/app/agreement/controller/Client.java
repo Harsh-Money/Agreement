@@ -7,10 +7,12 @@ import com.app.agreement.service.ClientService;
 import com.app.agreement.vo.ClientOwnerAgreementVoIDs;
 import com.app.agreement.vo.ClientVo;
 import com.cloudinary.Cloudinary;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -24,13 +26,20 @@ public class Client {
     @Autowired
     private ClientService clientService;
 
+    @GetMapping("/csrf-token")
+    public CsrfToken getCsrfToken(HttpServletRequest request){
+        return (CsrfToken) request.getAttribute("_csrf");
+    }
+
 
     @GetMapping
-    public ResponseEntity<List<ClientProfile>> getAllClient() {
+    public ResponseEntity<List<ClientProfile>> getAllClient(HttpServletRequest request) {
         try{
+            System.out.println(request.getSession().getId());
             List<ClientProfile> clientProfiles = clientService.getAllClient();
             return new ResponseEntity<>(clientProfiles, HttpStatus.OK);
         } catch (Exception e){
+            System.out.println("Came here");
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
 
