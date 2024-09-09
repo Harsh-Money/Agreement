@@ -14,4 +14,6 @@ public interface ClientService {
     public Boolean updateClientDetails(ClientDto clientDto)throws Exception;
     public Boolean deleteClientExist(Integer id)throws Exception;
     public Boolean setClientOwnerAgreement(ClientOwnerAgreementDtoIDs clientOwnerAgreementDtoIDs)throws Exception;
+
+    String verify(ClientDto clientDto);
 }

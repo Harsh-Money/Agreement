@@ -30,7 +30,7 @@ public class Owner {
         }
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<Boolean> setOwnerDetails(@RequestBody OwnerVo ownerVo){
         try{
             OwnerDto ownerDto = new OwnerDto();
@@ -74,6 +74,13 @@ public class Owner {
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody OwnerVo ownerVo) {
+        OwnerDto ownerDto = new OwnerDto();
+        BeanUtils.copyProperties(ownerVo, ownerDto);
+        return new ResponseEntity<>(ownerService.verify(ownerDto), HttpStatus.OK);
     }
 
 }

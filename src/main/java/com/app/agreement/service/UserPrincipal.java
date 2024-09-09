@@ -1,5 +1,6 @@
 package com.app.agreement.service;
 
+import com.app.agreement.entity.BaseEntityProfile;
 import com.app.agreement.entity.ClientProfile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,10 +12,10 @@ import java.util.List;
 
 public class UserPrincipal implements UserDetails {
 
-    private ClientProfile clientProfile;
+    private BaseEntityProfile baseEntityProfile;
 
-    public UserPrincipal(ClientProfile clientProfile) {
-        this.clientProfile = clientProfile;
+    public UserPrincipal(BaseEntityProfile baseEntityProfile) {
+        this.baseEntityProfile = baseEntityProfile;
     }
 
     @Override
@@ -24,12 +25,12 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        return clientProfile.getPassword();
+        return baseEntityProfile.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return clientProfile.getName();
+        return baseEntityProfile.getName();
     }
 
     @Override

@@ -10,6 +10,9 @@ import com.app.agreement.repository.OwnerRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +27,12 @@ public class ClientServiceImpl implements ClientService{
 
     @Autowired
     private OwnerRepo ownerRepo;
+
+    @Autowired
+    private AuthenticationManager authManager;
+
+    @Autowired
+    private JWTService jwtService;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
 
@@ -58,7 +67,7 @@ public class ClientServiceImpl implements ClientService{
             clientDto.setPassword(passwordEncoder.encode(clientDto.getPassword()));
         }
         BeanUtils.copyProperties(clientDto,clientProfile);
-        int id = clientDto.getId();
+        int id = clientRepo.findByNameIgnoreCase(clientDto.getName()).getId();
         int result = clientRepo.updateClientProfile(id, clientDto);
         if(result > 0){
             return true;
@@ -91,6 +100,17 @@ public class ClientServiceImpl implements ClientService{
         clientProfile.getOwnerProfiles().add(ownerProfile);
         clientRepo.save(clientProfile);
         return true;
+    }
+
+    @Override
+    public String verify(ClientDto clientDto) {
+        Authentication authentication = authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(clientDto.getName(), clientDto.getPassword())
+        );
+
+        if (authentication.isAuthenticated())
+            return jwtService.getToken(clientDto.getName());
+        else return "failed";
     }
 
 }
