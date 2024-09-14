@@ -1,6 +1,7 @@
 package com.app.agreement.configurations;
 
 import com.app.agreement.service.ClientSecurityDetails;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -32,8 +39,21 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(customizer -> customizer.disable())
+                .cors(corsCustomizer->corsCustomizer.configurationSource(new CorsConfigurationSource() {
+                    @Override
+                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                        CorsConfiguration corsConfiguration=new CorsConfiguration();
+                        corsConfiguration.setAllowCredentials(true);// allows taking authentication with credentials
+                        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+                        // providing the allowed origin details, can provide multiple origins here, 7070 is the port number of client application here
+                        corsConfiguration.setAllowedMethods(Collections.singletonList("*"));// allowing all HTTP methods GET,POST,PUT etc, can configure on your need
+                        corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));// allowing all the request headers, can configure according to your need, which headers to allow
+                        corsConfiguration.setMaxAge(Duration.ofSeconds(5L)); // setting the max time till which the allowed origin will not make a pre-flight request again to check if the CORS is allowed on not
+                        return corsConfiguration;
+                    }
+                }))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("client/login","client/register", "/owner/login", "owner/register")
+                        .requestMatchers("client/login","client/register", "owner/login", "owner/register")
                         .permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())

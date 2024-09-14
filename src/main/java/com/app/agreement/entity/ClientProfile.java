@@ -1,6 +1,7 @@
 package com.app.agreement.entity;
 
 import com.app.agreement.dto.OwnerDto;
+import com.app.agreement.util.AgreementStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -23,5 +24,6 @@ public class ClientProfile extends BaseEntityProfile {
                 inverseJoinColumns = {@JoinColumn(name = "owner_id")}
     )
     private List<OwnerProfile> ownerProfiles;
+
 
 }

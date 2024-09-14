@@ -129,6 +129,14 @@ public class Agreements {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
+    }
 
+    @GetMapping("/all-agreement-of-ownerid/{id}")
+    public ResponseEntity<?> getAllAgreementByOwnerId(@PathVariable(value = "id") Integer id){
+        try {
+            return new ResponseEntity<>(agreementService.getAllAgreementByOwnerId(id), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
     }
 }

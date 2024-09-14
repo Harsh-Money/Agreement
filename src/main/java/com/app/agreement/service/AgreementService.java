@@ -16,4 +16,5 @@ public interface AgreementService {
     public Boolean setNewAgreement(ClientOwnerAgreementDtoIDs clientOwnerAgreementDtoIDs)throws Exception;
     public Boolean getAgreementSigned(ClientOwnerIDsDto clientOwnerIDsDto)throws Exception;
 
+    Object getAllAgreementByOwnerId(Integer id)throws Exception;
 }
