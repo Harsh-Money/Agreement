@@ -8,5 +8,30 @@ services:
       MYSQL_PASSWORD: Harsh@123
     ports:
       - "3307:3306"
+    networks:
+      - networkagreement
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  springboot-app:
+    image: harsh237/agreementsb1 # Make sure to build your Spring Boot image
+    container_name: agreement-app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://agreement-mysql:3306/agreement_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Harsh@123
+    ports:
+      - "8090:8080" # Exposing Spring Boot's port
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - networkagreement
+
+networks:
+  networkagreement:
 
 
