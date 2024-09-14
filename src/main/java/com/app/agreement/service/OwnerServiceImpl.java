@@ -1,8 +1,12 @@
 package com.app.agreement.service;
 
 import com.app.agreement.dto.OwnerDto;
+import com.app.agreement.entity.AgreementEntity;
 import com.app.agreement.entity.OwnerProfile;
+import com.app.agreement.repository.AgreementRepo;
 import com.app.agreement.repository.OwnerRepo;
+import com.app.agreement.util.AgreementStatus;
+import com.app.agreement.util.JWTToken;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +31,12 @@ public class OwnerServiceImpl implements OwnerService {
 
     @Autowired
     private JWTService jwtService;
+
+    @Autowired
+    private JWTToken jwtToken;
+
+    @Autowired
+    private AgreementRepo agreementRepo;
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -76,14 +86,29 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
-    public String verify(OwnerDto ownerDto) {
+    public JWTToken verify(OwnerDto ownerDto) {
         Authentication auth = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(ownerDto.getName(), ownerDto.getPassword())
         );
 
         if (auth.isAuthenticated()) {
-            return jwtService.getToken(ownerDto.getName());
+            jwtToken.setToken(jwtService.getToken(ownerDto.getName()));
+            return jwtToken;
         }
-        return "failed";
+        return null;
+    }
+
+    @Override
+    public Boolean setAgreementApprove(Integer id) throws Exception {
+        AgreementEntity agreementEntity = agreementRepo.findById(id).get();
+        agreementEntity.setStatus(AgreementStatus.APPROVED);
+        agreementRepo.save(agreementEntity);
+        return true;
+    }
+
+    @Override
+    public OwnerProfile getOwnerByName(String name)throws Exception {
+        OwnerProfile ownerProfile = ownerRepo.findByNameIgnoreCase(name);
+        return ownerProfile;
     }
 }

@@ -3,6 +3,7 @@ package com.app.agreement.controller;
 import com.app.agreement.dto.OwnerDto;
 import com.app.agreement.entity.OwnerProfile;
 import com.app.agreement.service.OwnerService;
+import com.app.agreement.util.JWTToken;
 import com.app.agreement.vo.OwnerVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,15 @@ public class Owner {
         try {
             List<OwnerProfile> ownerProfiles = ownerService.getAllOwner();
             return new ResponseEntity<>(ownerProfiles, HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+    }
+
+    @PostMapping("/by-name")
+    public ResponseEntity<OwnerProfile> getOwnerByName(@RequestBody OwnerVo ownerVo){
+        try {
+            return new ResponseEntity<>(ownerService.getOwnerByName(ownerVo.getName()), HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
@@ -77,10 +87,20 @@ public class Owner {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody OwnerVo ownerVo) {
+    public ResponseEntity<JWTToken> login(@RequestBody OwnerVo ownerVo) {
         OwnerDto ownerDto = new OwnerDto();
         BeanUtils.copyProperties(ownerVo, ownerDto);
         return new ResponseEntity<>(ownerService.verify(ownerDto), HttpStatus.OK);
+    }
+
+    @PostMapping("/agreement/approve/{id}")
+    public ResponseEntity<Boolean> setAgreementApprove(@PathVariable(value = "id") Integer id){
+        try {
+            return new ResponseEntity<>(ownerService.setAgreementApprove(id), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
     }
 
 }

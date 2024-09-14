@@ -2,10 +2,14 @@ package com.app.agreement.controller;
 
 import com.app.agreement.dto.ClientDto;
 import com.app.agreement.dto.ClientOwnerAgreementDtoIDs;
+import com.app.agreement.dto.OwnerDto;
 import com.app.agreement.entity.ClientProfile;
 import com.app.agreement.service.ClientService;
+import com.app.agreement.util.ClientAgreement;
+import com.app.agreement.util.JWTToken;
 import com.app.agreement.vo.ClientOwnerAgreementVoIDs;
 import com.app.agreement.vo.ClientVo;
+import com.app.agreement.vo.OwnerVo;
 import com.cloudinary.Cloudinary;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.BeanUtils;
@@ -43,6 +47,15 @@ public class Client {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
 
+    }
+
+    @PostMapping("/by-name")
+    public ResponseEntity<ClientProfile> getClientByName(@RequestBody ClientVo clientVo){
+        try {
+            return new ResponseEntity<>(clientService.getClientByName(clientVo.getName()), HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
     }
 
     @PutMapping
@@ -109,10 +122,21 @@ public class Client {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody ClientVo clientVo){
+    public ResponseEntity<JWTToken> login(@RequestBody ClientVo clientVo){
         ClientDto clientDto = new ClientDto();
         BeanUtils.copyProperties(clientVo,clientDto);
         System.out.println(clientVo);
         return new ResponseEntity<>(clientService.verify(clientDto), HttpStatus.OK);
+    }
+
+    @PostMapping("/send-agreement")
+    public ResponseEntity<?> sendAgreementToOwner(@RequestBody ClientAgreement clientAgreement){
+        try {
+            Boolean status = clientService.sendAgreementToOwner(clientAgreement);
+            return new ResponseEntity<>(status, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
     }
 }

@@ -13,6 +13,7 @@ import java.util.List;
 public interface AgreementRepo extends JpaRepository<AgreementEntity, Integer> {
 
     List<AgreementEntity> findAll();
+    List<AgreementEntity> findByOwnerProfile_Id(Integer ownerId);
 
 //    private String name;
 //    private String cloudinaryUrl;
@@ -25,7 +26,7 @@ public interface AgreementRepo extends JpaRepository<AgreementEntity, Integer> {
             "SET ae.name = COALESCE(:#{#agreementDto.name}, ae.name), " +
             "    ae.cloudinaryUrl = COALESCE(:#{#agreementDto.cloudinaryUrl}, ae.cloudinaryUrl), " +
             "    ae.createdTimestamp = COALESCE(:#{#agreementDto.createdTimestamp}, ae.createdTimestamp), " +
-            "    ae.modifiedTimestamp = COALESCE(:#{#agreementDto.modifiedTimestamp}, ae.modifiedTimestamp), " +
+            "    ae.expireTimestamp = COALESCE(:#{#agreementDto.expireTimestamp}, ae.expireTimestamp), " +
             "    ae.status = COALESCE(:#{#agreementDto.status}, ae.status) " +
             "WHERE ae.id = :id")
     int updateOwnerProfile(@Param("id") Integer id, @Param("agreementDto") AgreementDto agreementDto);
