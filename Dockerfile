@@ -1,5 +1,5 @@
 ## Build stage
-FROM gradle:7.6-jdk21 AS build
+FROM gradle:8.4-jdk21 AS build
 WORKDIR /app
 COPY . /app
 RUN gradle clean build -x test # Skipping tests during the build
