@@ -8,4 +8,5 @@ public class ClientOwnerAgreementDtoIDs {
     private Integer clientId;
     private Integer ownerId;
     private Integer agreementId;
+
 }
