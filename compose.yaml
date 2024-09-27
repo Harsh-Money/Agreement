@@ -5,7 +5,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: Harsh@123
       MYSQL_DATABASE: agreement_db
-      MYSQL_USER: root
       MYSQL_PASSWORD: Harsh@123
     ports:
       - "3307:3306"
@@ -21,9 +20,12 @@ services:
     image: harsh237/agreementsb1 # Make sure to build your Spring Boot image
     container_name: agreement-app
     environment:
+      MYSQL_HOST: agreement-mysql
+      MYSQL_PORT: 3306
+      MYSQL_DB_NAME: agreement_db
       SPRING_DATASOURCE_URL: jdbc:mysql://agreement-mysql:3306/agreement_db
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: Harsh@123
+      MYSQL_USER: root
+      MYSQL_PASSWORD: Harsh@123
       ALLOWED_ORIGIN: http://localhost:3000
     ports:
       - "8090:8080" # Exposing Spring Boot's port

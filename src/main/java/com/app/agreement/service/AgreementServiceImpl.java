@@ -92,4 +92,11 @@ public class AgreementServiceImpl implements AgreementService{
     public Object getAllAgreementByOwnerId(Integer id) throws Exception {
         return agreementRepo.findByOwnerProfile_Id(id);
     }
+
+    @Override
+    public Object getAllAgreementByClientId(Integer id) throws Exception {
+        return agreementRepo.findByClientProfile_Id(id);
+    }
+
+
 }

@@ -14,6 +14,7 @@ public interface AgreementRepo extends JpaRepository<AgreementEntity, Integer> {
 
     List<AgreementEntity> findAll();
     List<AgreementEntity> findByOwnerProfile_Id(Integer ownerId);
+    List<AgreementEntity> findByClientProfile_Id(Integer clientId);
 
 //    private String name;
 //    private String cloudinaryUrl;
