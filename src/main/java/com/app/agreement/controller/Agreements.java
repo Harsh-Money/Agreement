@@ -6,6 +6,7 @@ import com.app.agreement.dto.ClientOwnerIDsDto;
 import com.app.agreement.entity.AgreementEntity;
 import com.app.agreement.service.AgreementService;
 import com.app.agreement.service.ImageUpload;
+import com.app.agreement.service.WebSocketServiceImpl;
 import com.app.agreement.vo.AgreementVo;
 import com.app.agreement.vo.ClientOwnerAgreementVoIDs;
 import com.app.agreement.vo.ClientOwnerIDsVo;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/agreement")
@@ -28,6 +30,9 @@ public class Agreements {
 
     @Autowired
     private ImageUpload imageUpload;
+
+    @Autowired
+    private WebSocketServiceImpl webSocketService;
 
     @GetMapping
     public ResponseEntity<List<AgreementEntity>> getAllAgreement() {
@@ -143,7 +148,20 @@ public class Agreements {
     @GetMapping("/all-agreement-of-clientid/{id}")
     public ResponseEntity<?> getAllAgreementByClientId(@PathVariable(value = "id") Integer id) {
         try {
-            return new ResponseEntity<>(agreementService.getAllAgreementByClientId(id), HttpStatus.OK);
+            Object allAgreement = agreementService.getAllAgreementByClientId(id);
+//            System.out.println("allAgreement: "+allAgreement);
+                Thread.sleep(2000);
+            List<AgreementEntity> sourceAgreementEntity = (List<AgreementEntity>) allAgreement;
+            List<AgreementEntity> targetAgreement = sourceAgreementEntity.stream()
+                    .map(agreementEntity -> {
+                        AgreementEntity ae = new AgreementEntity();
+                        ae.setId(agreementEntity.getId());
+                        ae.setStatus(agreementEntity.getStatus());
+                        ae.setOwnerProfile(agreementEntity.getOwnerProfile());
+                        return ae;
+                    }).collect(Collectors.toList());
+            webSocketService.sendAllAgreementFoundByClientId(targetAgreement);
+            return new ResponseEntity<>(allAgreement, HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
