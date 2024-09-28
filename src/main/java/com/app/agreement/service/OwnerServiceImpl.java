@@ -1,9 +1,11 @@
 package com.app.agreement.service;
 
+import com.app.agreement.controller.Agreements;
 import com.app.agreement.dto.OwnerDto;
 import com.app.agreement.entity.AgreementEntity;
 import com.app.agreement.entity.OwnerProfile;
 import com.app.agreement.repository.AgreementRepo;
+import com.app.agreement.repository.ClientRepo;
 import com.app.agreement.repository.OwnerRepo;
 import com.app.agreement.util.AgreementStatus;
 import com.app.agreement.util.JWTToken;
@@ -19,9 +21,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OwnerServiceImpl implements OwnerService {
+
+    @Autowired
+    private AgreementService agreementService;
 
     @Autowired
     private OwnerRepo ownerRepo;
@@ -37,6 +43,9 @@ public class OwnerServiceImpl implements OwnerService {
 
     @Autowired
     private AgreementRepo agreementRepo;
+
+    @Autowired
+    private WebSocketServiceImpl webSocketService;
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -103,6 +112,20 @@ public class OwnerServiceImpl implements OwnerService {
         AgreementEntity agreementEntity = agreementRepo.findById(id).get();
         agreementEntity.setStatus(AgreementStatus.APPROVED);
         agreementRepo.save(agreementEntity);
+
+//        From here we are sending the data from websocket server.
+        Object listOfAgreementByClient = agreementService
+                .getAllAgreementByClientId(agreementEntity.getClientProfile().getId());
+        List<AgreementEntity> sourceAgreementEntity = (List<AgreementEntity>) listOfAgreementByClient;
+        List<AgreementEntity> targetAgreement = sourceAgreementEntity.stream()
+                .map(agmtEntity -> {
+                    AgreementEntity ae = new AgreementEntity();
+                    ae.setId(agmtEntity.getId());
+                    ae.setStatus(agmtEntity.getStatus());
+                    ae.setOwnerProfile(agmtEntity.getOwnerProfile());
+                    return ae;
+                }).collect(Collectors.toList());
+        webSocketService.sendAllAgreementFoundByClientId(targetAgreement);
         return true;
     }
 

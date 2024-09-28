@@ -54,7 +54,7 @@ public class SecurityConfiguration {
                     }
                 }))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("client/login","client/register", "owner/login", "owner/register")
+                        .requestMatchers("client/login","client/register", "owner/login", "owner/register", "websockets")
                         .permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
